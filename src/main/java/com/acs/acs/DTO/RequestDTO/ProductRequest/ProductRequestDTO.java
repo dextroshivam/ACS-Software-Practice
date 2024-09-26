@@ -1,6 +1,7 @@
 package com.acs.acs.DTO.RequestDTO.ProductRequest;
 
 import com.acs.acs.ENUM.ProductCategory;
+import com.acs.acs.Enitities.Attribute;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Temporal;
@@ -11,19 +12,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductRequestDTO {
 
-//    private Long id;
-
     @NotNull(message = "Client ID cannot be null")
     private Long customerId;
-
-//    @NotNull(message = "Status cannot be null")
-//    private Boolean status;
 
     @NotBlank(message = "SKU cannot be blank")
     @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "SKU must be alphanumeric with underscores allowed")
@@ -46,7 +43,7 @@ public class ProductRequestDTO {
     @NotNull(message = "Created By cannot be null")
     private Long createdBy;
 
-//    @NotNull(message = "Created On cannot be null")
-//    @FutureOrPresent(message = "The date cannot be in the past")
-//    private Date createdOn;
+    List<ProductAttributeRequestDTO> productsAtrributes;
+
+
 }

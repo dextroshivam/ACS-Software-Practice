@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -43,7 +45,7 @@ public class Product {
     private Long createdBy;
 
     @NotNull(message = "Created On cannot be null")
-    @FutureOrPresent(message = "The date cannot be in the past")
-    private Date createdOn;
+//    @FutureOrPresent(message = "The date cannot be in the past")
+    private LocalDateTime createdOn;
 }
 

@@ -1,6 +1,8 @@
 package com.acs.acs.Controllers;
 
+import com.acs.acs.DTO.RequestDTO.ProductRequest.ProductAttributeRequestDTO;
 import com.acs.acs.DTO.RequestDTO.ProductRequest.ProductRequestDTO;
+import com.acs.acs.DTO.ResponseDTO.ProductResponse.ProductResponseDTO;
 import com.acs.acs.Enitities.Product;
 import com.acs.acs.Services.ProductService;
 import jakarta.validation.Valid;
@@ -20,45 +22,44 @@ public class ProductController {
     // 1. Create product
     @PostMapping("/add")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
-        Product createdProduct = productService.createProduct(productRequestDTO);
-        return ResponseEntity.ok(createdProduct);
+        try{
+            Product createdProduct = productService.createProduct(productRequestDTO);
+            return ResponseEntity.ok(createdProduct);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     // 2. Get product by ID
     @GetMapping("/get/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.getProductById(id);
-        if (product != null) {
-            return ResponseEntity.ok(product);
+    public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id) {
+        ProductResponseDTO productResponseDTO = productService.getProductById(id);
+        if (productResponseDTO != null) {
+            return ResponseEntity.ok(productResponseDTO);
         }
         return ResponseEntity.notFound().build();
     }
 
-//    // 3. Get all products
-//    @GetMapping
-//    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-//        List<ProductDTO> products = productService.getAllProducts();
-//        return ResponseEntity.ok(products);
-//    }
-//
-//    // 4. Update product details
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO productDTO) {
-//        ProductDTO updatedProduct = productService.updateProduct(id, productDTO);
-//        if (updatedProduct != null) {
-//            return ResponseEntity.ok(updatedProduct);
-//        }
-//        return ResponseEntity.notFound().build();
-//    }
-//
-//    // 5. Delete product
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-//        boolean isDeleted = productService.deleteProduct(id);
-//        if (isDeleted) {
-//            return ResponseEntity.noContent().build();
-//        }
-//        return ResponseEntity.notFound().build();
-//    }
+    // 3. Get all products
+    @GetMapping("/getAll")
+    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
+        List<ProductResponseDTO> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam(required = false) String sku,@RequestParam(required = false) Long customerId,@RequestParam(required = false) Long userId) {
+        try{
+            List<Product> productList=productService.searchProducts(sku,customerId,userId);
+            return ResponseEntity.ok(productList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+
+
+
+    }
 }
 
