@@ -1,4 +1,4 @@
-package com.acs.acs.DTO.RequestDTO;
+package com.acs.acs.DTO.RequestDTO.UserRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
