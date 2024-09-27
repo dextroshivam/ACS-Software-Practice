@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findBySkuAndCustomerId(String sku, Long customerId);
+    Product findBySku(String sku);
 
     List<Product> findBySkuAndCreatedBy(String sku, Long createdBy);
 

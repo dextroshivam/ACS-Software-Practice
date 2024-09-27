@@ -65,11 +65,21 @@ public class UserService {
 
     }
 
+
+
+
+
     public User addUser(UserRequestDTO userRequestDTO) {
         User user = UserRequestDTOToUser(userRequestDTO);
         user.setStatus(true);
         return userRepository.save(user);
     }
+
+
+
+
+
+
     public UniversalResponseDTO getUserById(long id) {
 
         UniversalResponseDTO universalRequestDTO = new UniversalResponseDTO();

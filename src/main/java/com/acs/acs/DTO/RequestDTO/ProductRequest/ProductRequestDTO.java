@@ -1,17 +1,13 @@
 package com.acs.acs.DTO.RequestDTO.ProductRequest;
 
 import com.acs.acs.ENUM.ProductCategory;
-import com.acs.acs.Enitities.Attribute;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -44,6 +40,5 @@ public class ProductRequestDTO {
     private Long createdBy;
 
     List<ProductAttributeRequestDTO> productsAtrributes;
-
 
 }
