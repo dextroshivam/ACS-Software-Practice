@@ -39,92 +39,34 @@ public class ASNService {
     @Autowired
     private WarehouseReceivedItemLogsRepository warehouseReceivedItemLogsRepository;
 
+
+
     // Create ASN, ASN unit, and warehouse received item
     public ASNResponseDTO createASN(ASNRequestDTO asnRequestDTO) {
-//        Goals:
-//        1. ASNResponseDTO done
-//        2. Create entry in asninof -- done
-//        3. create entry in asnunit
-//        4. create entry in warehouseitems
-
-
-
-
-
-        ASNInfoRequestDTO asnInfoRequestDTO = asnRequestDTO.getAsnInfoRequestDTO();
-
         // Create ASN info
-        AdvanceShipmentNoticeInfo asnInfo = new AdvanceShipmentNoticeInfo();
-        asnInfo.setPoNumber(asnInfoRequestDTO.getPoNumber());
-        asnInfo.setLotNumber(asnInfoRequestDTO.getLotNumber());
-        asnInfo.setTotalQuantity(asnInfoRequestDTO.getTotalQuantity());
-        asnInfo.setUserId(asnInfoRequestDTO.getUserId());
-        asnInfo.setCreatedOn(LocalDateTime.now());
-        // Goal 2
-        AdvanceShipmentNoticeInfo savedAdvanceShipmentNoticeInfo = asnInfoRepository.save(asnInfo);
-//        createLog(savedAdvanceShipmentNoticeInfo.getId(),OperationType.Create_ASN);
-
-        // Goal 1.4
-        List<ASNUnitRequestDTO> units=asnRequestDTO.getUnits();
-//        Goal 1 :
-        ASNResponseDTO asnResponseDTO = new ASNResponseDTO();
-        asnResponseDTO.setAsnId(savedAdvanceShipmentNoticeInfo.getId());
-        asnResponseDTO.setUserId(savedAdvanceShipmentNoticeInfo.getUserId());
-        asnResponseDTO.setWarehouseId(asnRequestDTO.getAsnInfoRequestDTO().getWarehouseId());
-        asnResponseDTO.setUnits(units);
-        // Create ASN units and warehouse item
+        AdvanceShipmentNoticeInfo savedAdvanceShipmentNoticeInfo =
+                saveAdvanceShipmentNoticeInfo(asnRequestDTO.getAsnInfoRequestDTO());
+//        create ASN unit
+        List<ASNUnitRequestDTO> units = asnRequestDTO.getUnits();
+//        create response
+        ASNResponseDTO asnResponseDTO = createASNResponseDTO(
+                savedAdvanceShipmentNoticeInfo,asnRequestDTO,units);
         for (ASNUnitRequestDTO asnUnitRequestDTO : units) {
-
-            AdvanceShipmentNoticeUnit asnUnit = new AdvanceShipmentNoticeUnit();
-            asnUnit.setAsnId(savedAdvanceShipmentNoticeInfo.getId());
-            // create product for product id and quantity
-
-            asnUnit.setProductId(asnUnitRequestDTO.getProductId());
-            asnUnit.setQuantity(asnUnitRequestDTO.getQuantity());
-            asnUnit.setLocationBarcode("L1");
-            asnUnit.setReceivedLocation("R1");
-            AdvanceShipmentNoticeUnit savedAdvanceShipmentNoticeUnit= asnUnitRepository.save(asnUnit);
-//            createLog(savedAdvanceShipmentNoticeUnit.getId(),OperationType.Create_ASN_Unit);
-
+        // Create ASN units and warehouse item
+            AdvanceShipmentNoticeUnit savedAdvanceShipmentNoticeUnit =
+                    saveAdvanceShipmentNoticeUnit(savedAdvanceShipmentNoticeInfo,asnUnitRequestDTO);
             // Create Warehouse Received Items for each ASN unit
-            WarehouseReceivedItems receivedItem = new WarehouseReceivedItems();
-
-            receivedItem.setProductId(asnUnitRequestDTO.getProductId());
-            receivedItem.setWarehouseId(asnRequestDTO.getAsnInfoRequestDTO().getWarehouseId());
-            receivedItem.setCustomerId(asnRequestDTO.getAsnInfoRequestDTO().getCustomerId());
-            receivedItem.setLocationBarcode(savedAdvanceShipmentNoticeUnit.getLocationBarcode());
-            receivedItem.setReceiveStatus(ReceiveStatus.RECEIVED); // Default status
-            receivedItem.setInventoryStage(InventoryStage.ON_HAND); // Default stage
-            receivedItem.setQuantity(asnUnitRequestDTO.getQuantity());
-            receivedItem.setLotNumber(asnRequestDTO.getAsnInfoRequestDTO().getLotNumber());
-            receivedItem.setUserId(asnRequestDTO.getAsnInfoRequestDTO().getUserId());
-            receivedItem.setCreatedOn(savedAdvanceShipmentNoticeInfo.getCreatedOn());
-            WarehouseReceivedItems savedWarehouseReceivedItems= warehouseReceivedItemsRepository.save(receivedItem);
+            WarehouseReceivedItems savedWarehouseReceivedItems = saveWarehouseReceivedItems(
+                    asnUnitRequestDTO,asnRequestDTO, savedAdvanceShipmentNoticeUnit,
+                    savedAdvanceShipmentNoticeInfo);
+            // create log
             createLog(savedWarehouseReceivedItems,OperationType.Receive_Inventory);
         }
-
-
         return asnResponseDTO;
     }
 
     public void createLog(WarehouseReceivedItems warehouseReceivedItems, OperationType operationType){
         WarehouseReceivedItemLogs warehouseReceivedItemLogs = new WarehouseReceivedItemLogs();
-//        private Long productId;
-//        private Long warehouseId;
-//        private Long customerId;
-//        private String locationBarcode;
-//        @Enumerated(EnumType.STRING)
-//        private ReceiveStatus receiveStatus;
-//        @Enumerated(EnumType.STRING)
-//        private InventoryStage inventoryStage;
-//        private Integer quantity;
-//        private String lotNumber;
-//        private Long userId;
-//        @Temporal(TemporalType.TIMESTAMP)
-//        private Date createdOn;
-////    private Long operationSourceId;
-//        @Enumerated(EnumType.STRING)
-//        private OperationType operationType;
         warehouseReceivedItemLogs.setProductId(warehouseReceivedItems.getProductId());
         warehouseReceivedItemLogs.setWarehouseId(warehouseReceivedItems.getWarehouseId());
         warehouseReceivedItemLogs.setCustomerId(warehouseReceivedItems.getCustomerId());
@@ -138,6 +80,59 @@ public class ASNService {
         warehouseReceivedItemLogs.setOperationType(operationType);
         warehouseReceivedItemLogsRepository.save(warehouseReceivedItemLogs);
 //        return warehouseReceivedItemLogs;
+    }
+    // saveAdvanceShipmentNoticeInfo
+    private AdvanceShipmentNoticeInfo saveAdvanceShipmentNoticeInfo(ASNInfoRequestDTO asnInfoRequestDTO) {
+
+        AdvanceShipmentNoticeInfo asnInfo = new AdvanceShipmentNoticeInfo();
+        asnInfo.setPoNumber(asnInfoRequestDTO.getPoNumber());
+        asnInfo.setLotNumber(asnInfoRequestDTO.getLotNumber());
+        asnInfo.setTotalQuantity(asnInfoRequestDTO.getTotalQuantity());
+        asnInfo.setUserId(asnInfoRequestDTO.getUserId());
+        asnInfo.setCreatedOn(LocalDateTime.now());
+        return asnInfoRepository.save(asnInfo);
+    }
+
+    // saveAdvanceShipmentNoticeUnit
+    private AdvanceShipmentNoticeUnit saveAdvanceShipmentNoticeUnit(
+            AdvanceShipmentNoticeInfo savedAdvanceShipmentNoticeInfo,
+            ASNUnitRequestDTO asnUnitRequestDTO){
+        AdvanceShipmentNoticeUnit asnUnit= new AdvanceShipmentNoticeUnit();
+        asnUnit.setAsnId(savedAdvanceShipmentNoticeInfo.getId());
+        asnUnit.setProductId(asnUnitRequestDTO.getProductId());
+        asnUnit.setQuantity(asnUnitRequestDTO.getQuantity());
+        asnUnit.setLocationBarcode("L1");
+        asnUnit.setReceivedLocation("R1");
+        return asnUnitRepository.save(asnUnit);
+
+    }
+    private WarehouseReceivedItems saveWarehouseReceivedItems(
+            ASNUnitRequestDTO asnUnitRequestDTO,ASNRequestDTO asnRequestDTO,
+            AdvanceShipmentNoticeUnit savedAdvanceShipmentNoticeUnit,
+            AdvanceShipmentNoticeInfo savedAdvanceShipmentNoticeInfo
+    ){
+        WarehouseReceivedItems receivedItem = new WarehouseReceivedItems();
+        receivedItem.setProductId(asnUnitRequestDTO.getProductId());
+        receivedItem.setWarehouseId(asnRequestDTO.getAsnInfoRequestDTO().getWarehouseId());
+        receivedItem.setCustomerId(asnRequestDTO.getAsnInfoRequestDTO().getCustomerId());
+        receivedItem.setLocationBarcode(savedAdvanceShipmentNoticeUnit.getLocationBarcode());
+        receivedItem.setReceiveStatus(ReceiveStatus.RECEIVED); // Default status
+        receivedItem.setInventoryStage(InventoryStage.ON_HAND); // Default stage
+        receivedItem.setQuantity(asnUnitRequestDTO.getQuantity());
+        receivedItem.setLotNumber(asnRequestDTO.getAsnInfoRequestDTO().getLotNumber());
+        receivedItem.setUserId(asnRequestDTO.getAsnInfoRequestDTO().getUserId());
+        receivedItem.setCreatedOn(savedAdvanceShipmentNoticeInfo.getCreatedOn());
+        return warehouseReceivedItemsRepository.save(receivedItem);
+    }
+    private ASNResponseDTO createASNResponseDTO(
+            AdvanceShipmentNoticeInfo savedAdvanceShipmentNoticeInfo,
+            ASNRequestDTO asnRequestDTO,List<ASNUnitRequestDTO> units){
+        ASNResponseDTO asnResponseDTO = new ASNResponseDTO();
+        asnResponseDTO.setAsnId(savedAdvanceShipmentNoticeInfo.getId());
+        asnResponseDTO.setUserId(savedAdvanceShipmentNoticeInfo.getUserId());
+        asnResponseDTO.setWarehouseId(asnRequestDTO.getAsnInfoRequestDTO().getWarehouseId());
+        asnResponseDTO.setUnits(units);
+        return asnResponseDTO;
     }
 
 }
