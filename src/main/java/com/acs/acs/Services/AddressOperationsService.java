@@ -31,6 +31,7 @@ public class AddressOperationsService {
 
     // Get all states of a particular country
     public List<State> getStatesByCountry(Long countryId) {
+//        return stateRepository.findByCountryId(countryId);
         return stateRepository.findByCountryId(countryId);
     }
 

@@ -144,6 +144,7 @@ public class CustomerService {
         customer.setPassword(customerRequestDTO.getPassword());
         customer.setAddressLine1(customerRequestDTO.getAddressLine1());
         customer.setAddressLine2(customerRequestDTO.getAddressLine2());
+        customer.setIsPartialOrder(customerRequestDTO.getIsPartialOrder());
         customer.setCityId(customerRequestDTO.getCityId());
         customer.setStateId(customerRequestDTO.getStateId());
         customer.setCountryId(customerRequestDTO.getCountryId());

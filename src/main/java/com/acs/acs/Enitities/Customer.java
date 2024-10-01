@@ -26,6 +26,8 @@ public class Customer {
     private String password;
     @NotNull
     private Boolean status;
+    @NotNull
+    private Boolean isPartialOrder;
 
     private String addressLine1;
     private String addressLine2;
@@ -33,6 +35,4 @@ public class Customer {
     private Long stateId;
     private Long countryId;
     private String zipCode;
-
-
 }

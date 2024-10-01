@@ -15,7 +15,6 @@ public class AdvanceShipmentNoticeUnit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Long asnId;
     private Long productId;
     private Integer quantity;

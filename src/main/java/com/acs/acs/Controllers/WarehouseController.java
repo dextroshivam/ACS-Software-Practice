@@ -21,7 +21,7 @@ public class WarehouseController {
     ASNService asnService;
     @Autowired
     WarehouseService warehouseService;
-
+    // create implimentation is in the asn service
     // API to get warehouse received items by product ID
     @GetMapping("/items/{productId}")
     public ResponseEntity<List<WarehouseReceivedItems>> getByProductId(@PathVariable Long productId) {

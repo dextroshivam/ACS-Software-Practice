@@ -19,4 +19,5 @@ public class CustomerRequestDTO {
     private Long stateId;
     private Long countryId;
     private String zipCode;
+    private Boolean isPartialOrder;
 }
