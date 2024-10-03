@@ -1,6 +1,7 @@
 package com.acs.acs.Enitities;
 
 import com.acs.acs.ENUM.OrderStatus;
+import com.acs.acs.ENUM.ServiceType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,10 +22,14 @@ public class WarehouseOrdersInfo {
     @Column(name = "client_id", nullable = false)
     private Long customerId;
     private OrderStatus orderStatus;
-//    @Column(name = "product_id" , nullable = false)
-//    private Long productId;
-//
-//    @Column(name = "product_quantity",nullable = false)
-//    private Long productQuantity;
+
+    private Long shipToCityId;
+    private Long shipToStateId;
+    private Long shipToCountryId;
+    private String shipToZipCode;
+    private Long carrierId;
+    private String carrierName;
+    private ServiceType serviceType;
+
 }
 
