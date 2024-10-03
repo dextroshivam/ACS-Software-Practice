@@ -29,7 +29,7 @@ public class WarehouseReceivedItems {
     private ReceiveStatus receiveStatus;
     @Enumerated(EnumType.STRING)
     private InventoryStage inventoryStage;
-    private Integer quantity;
+    private Long quantity;
     private String lotNumber;
     private Long userId;
     private LocalDateTime createdOn;

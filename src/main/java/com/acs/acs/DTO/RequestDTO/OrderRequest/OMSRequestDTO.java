@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class OMSRequestDTO {
-    Long orderNumber;
-    Long clientId;
+    String orderNumber;
+    Long customerId;
     List<OMSProductDetailsDTO> productDetails;
 }

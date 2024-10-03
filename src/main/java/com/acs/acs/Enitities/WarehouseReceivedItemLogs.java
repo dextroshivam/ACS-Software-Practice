@@ -33,7 +33,7 @@ public class WarehouseReceivedItemLogs {
     @Enumerated(EnumType.STRING)
     private InventoryStage inventoryStage;
 
-    private Integer quantity;
+    private Long quantity;
     private String lotNumber;
     private Long userId;
 

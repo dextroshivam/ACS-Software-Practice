@@ -31,7 +31,6 @@ public class ASNService {
     private AdvanceShipmentNoticeUnitRepository asnUnitRepository;
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private WarehouseReceivedItemsRepository warehouseReceivedItemsRepository;
     @Autowired

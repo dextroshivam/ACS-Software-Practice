@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class ASNUnitRequestDTO {
     private Long productId;
-    private Integer quantity;
+    private Long quantity;
 }

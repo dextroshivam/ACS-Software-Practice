@@ -15,10 +15,10 @@ public class OMSOrdersInfo {
     private Long id;
 
     @Column(name = "order_number", nullable = false)
-    private Long orderNumber;
+    private String orderNumber;
 
     @Column(name = "client_id", nullable = false)
-    private Long clientId;
+    private Long customerId;
 
     @Column(name = "reason")
     private String reason;

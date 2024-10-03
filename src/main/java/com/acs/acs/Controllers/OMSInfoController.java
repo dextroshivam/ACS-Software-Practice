@@ -20,7 +20,7 @@ public class OMSInfoController {
     public ResponseEntity<String> addOrderDetailsInOMS(@RequestBody OMSRequestDTO omsRequestDTO) {
         try{
             String response = omsInfoService.addOrderDetailsInOMS(omsRequestDTO);
-            if(response.equals(""))
+            if(response.isEmpty())
                 return ResponseEntity.ok(response);
             else return ResponseEntity.badRequest().body(response);
         }catch (Exception e){

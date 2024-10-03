@@ -16,10 +16,10 @@ public class WarehouseOrdersInfo {
     private Long id;
 
     @Column(name = "order_number", nullable = false)
-    private Long orderNumber;
+    private String orderNumber;
 
     @Column(name = "client_id", nullable = false)
-    private Long clientId;
+    private Long customerId;
     private OrderStatus orderStatus;
 //    @Column(name = "product_id" , nullable = false)
 //    private Long productId;

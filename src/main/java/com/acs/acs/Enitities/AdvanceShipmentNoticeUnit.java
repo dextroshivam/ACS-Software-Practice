@@ -17,7 +17,7 @@ public class AdvanceShipmentNoticeUnit {
     private Long id;
     private Long asnId;
     private Long productId;
-    private Integer quantity;
+    private Long quantity;
     private String locationBarcode;
     private String receivedLocation;
 }
