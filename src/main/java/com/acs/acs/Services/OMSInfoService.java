@@ -22,6 +22,8 @@ public class OMSInfoService {
   @Autowired private CustomerRepository customerRepository;
   @Autowired private WarehouseOrdersItemsRepository warehouseOrdersItemsRepository;
   @Autowired private AddressRepository addressRepository;
+  @Autowired
+  private PartnersRepository partnersRepository;
 
   public String addOrderDetailsInOMS(OMSRequestDTO omsRequestDTO) {
     /* -- verify the address first
@@ -38,10 +40,31 @@ public class OMSInfoService {
      *           -> OFF- Create a back order of full amount - save in CIL with reason
      * */
 
-    String responseString = "";
     // create oms without setting reason
-    OMSOrdersInfo savedOmsOrdersInfo =
-        saveOmsOrdersInfo(omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "",null);
+    OMSOrdersInfo savedOmsOrdersInfo;
+
+    /* Check address */
+    Optional<Address> address =
+        addressRepository.findByCityIdAAndStateIdAndCountyIdAndZipCode(
+            omsRequestDTO.getShipToCityId(),
+            omsRequestDTO.getShipToStateId(),
+            omsRequestDTO.getShipToCountryId(),
+            omsRequestDTO.getShipToZipCode());
+    Partners partners=
+
+
+    if (!address.isPresent()) {
+      savedOmsOrdersInfo =
+          saveOmsOrdersInfo(
+              omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,Address);
+    } else {
+      savedOmsOrdersInfo =
+          saveOmsOrdersInfo(
+              omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,Address);
+    }
+
+    String responseString = "";
+
     boolean isErroredOrdered = false;
 
     // create oms units
@@ -52,7 +75,7 @@ public class OMSInfoService {
       // check if the product is present
       Optional<WarehouseReceivedItems> warehouseReceivedItems =
           warehouseReceivedItemsRepository.findOneByProductId(omsProductDetailsDTO.getProductId());
-      if(omsRequestDTO.getShipToCityId())
+
       if (warehouseReceivedItems.isPresent()) {
         // check if the quantity is available
         Long orderQuantity = omsProductDetailsDTO.getQuantity();
@@ -68,7 +91,8 @@ public class OMSInfoService {
                 saveOmsOrdersInfo(
                     omsRequestDTO.getOrderNumber(),
                     warehouseReceivedItems.get().getCustomerId(),
-                    "BACK_ORDER",OrderStatus.BACKORDER);
+                    "BACK_ORDER",
+                    OrderStatus.BACKORDER);
 
             // save omsunit with left over quantity with back order status in cil
             OMSOrdersItems saveBackOrderOMSOrdersItems =
@@ -119,7 +143,8 @@ public class OMSInfoService {
                 saveOmsOrdersInfo(
                     omsRequestDTO.getOrderNumber() + "S1",
                     warehouseReceivedItems.get().getCustomerId(),
-                    "BACK_ORDER",OrderStatus.BACKORDER);
+                    "BACK_ORDER",
+                    OrderStatus.BACKORDER);
 
             // save omsunit with left over quantity with back order status in cil
             OMSOrdersItems saveBackOrderOMSOrdersItems =

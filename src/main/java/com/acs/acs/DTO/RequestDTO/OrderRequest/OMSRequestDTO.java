@@ -14,7 +14,5 @@ public class OMSRequestDTO {
     private Long shipToCountryId;
     private String shipToZipCode;
     private Long carrierId;
-    private String carrierName;
-    private ServiceType serviceType;
     List<OMSProductDetailsDTO> productDetails;
 }

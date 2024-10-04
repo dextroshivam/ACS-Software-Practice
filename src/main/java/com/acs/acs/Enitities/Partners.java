@@ -16,10 +16,10 @@ public class Partners {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long carrierId;
-
+//    private Long carrierId;
+    private String name;
     @Enumerated(EnumType.STRING)
     private ServiceType serviceType;
     private Boolean is_default;
-    private Long customerId;
+//    private Long customerId;
 }
