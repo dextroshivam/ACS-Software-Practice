@@ -3,7 +3,8 @@ package com.acs.acs.ENUM;
 public enum OrderStatus {
     INITIATED(0),
     CREATED(1),
-    BACKORDER(18);
+    BACKORDER(18),
+    ASSIGNED(2);
 
     private final int code;
 

@@ -29,6 +29,8 @@ public class WarehouseController {
         return ResponseEntity.ok(items);
     }
 
+
+
     // API to get all warehouse received items
     @GetMapping("/get/warehouse-received-items")
     public ResponseEntity<List<WarehouseReceivedItems>> findAllWarehouseReceivedItems() {

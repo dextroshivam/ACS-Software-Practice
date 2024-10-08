@@ -1,26 +1,22 @@
 package com.acs.acs.Enitities;
 
-import com.acs.acs.ENUM.ServiceType;
+import com.acs.acs.ENUM.BoxType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
 
-@Entity
 @Data
+@Entity
+@Table(name = "wh_box_label")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Partners {
+public class WarehouseBoxLabel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-//    private Long carrierId;
-    private String name;
+    private Long warehouseId;
     @Enumerated(EnumType.STRING)
-    private ServiceType serviceType;
-    private Boolean is_default;
-
-    private Long customerId;
+    private BoxType boxType;
+    private Boolean boxStatus;
 }

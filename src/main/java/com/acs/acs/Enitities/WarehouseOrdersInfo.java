@@ -21,6 +21,7 @@ public class WarehouseOrdersInfo {
 
     @Column(name = "client_id", nullable = false)
     private Long customerId;
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     private Long shipToCityId;

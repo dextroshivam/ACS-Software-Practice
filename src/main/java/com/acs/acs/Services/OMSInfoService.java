@@ -3,8 +3,10 @@ package com.acs.acs.Services;
 import com.acs.acs.DTO.RequestDTO.OrderRequest.OMSProductDetailsDTO;
 import com.acs.acs.DTO.RequestDTO.OrderRequest.OMSRequestDTO;
 import com.acs.acs.ENUM.OrderStatus;
+import com.acs.acs.ENUM.ServiceType;
 import com.acs.acs.Enitities.*;
 import com.acs.acs.Repository.*;
+import com.acs.acs.Repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +24,7 @@ public class OMSInfoService {
   @Autowired private CustomerRepository customerRepository;
   @Autowired private WarehouseOrdersItemsRepository warehouseOrdersItemsRepository;
   @Autowired private AddressRepository addressRepository;
-  @Autowired
-  private PartnersRepository partnersRepository;
+  @Autowired private PartnersRepository partnersRepository;
 
   public String addOrderDetailsInOMS(OMSRequestDTO omsRequestDTO) {
     /* -- verify the address first
@@ -45,22 +46,24 @@ public class OMSInfoService {
 
     /* Check address */
     Optional<Address> address =
-        addressRepository.findByCityIdAAndStateIdAndCountyIdAndZipCode(
+        addressRepository.findByCityIdAndStateIdAndCountyIdAndZipCode(
             omsRequestDTO.getShipToCityId(),
             omsRequestDTO.getShipToStateId(),
             omsRequestDTO.getShipToCountryId(),
             omsRequestDTO.getShipToZipCode());
-    Partners partners=
+
+    //    Configure partners here
+    Optional<Partners> partner = partnersRepository.findByCustomerId(omsRequestDTO.getCustomerId());
 
 
     if (!address.isPresent()) {
       savedOmsOrdersInfo =
           saveOmsOrdersInfo(
-              omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,Address);
+              omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,partner, address);
     } else {
       savedOmsOrdersInfo =
           saveOmsOrdersInfo(
-              omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,Address);
+              omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,partner, address);
     }
 
     String responseString = "";
@@ -92,7 +95,7 @@ public class OMSInfoService {
                     omsRequestDTO.getOrderNumber(),
                     warehouseReceivedItems.get().getCustomerId(),
                     "BACK_ORDER",
-                    OrderStatus.BACKORDER);
+                    OrderStatus.BACKORDER,partner,address);
 
             // save omsunit with left over quantity with back order status in cil
             OMSOrdersItems saveBackOrderOMSOrdersItems =
@@ -127,7 +130,7 @@ public class OMSInfoService {
                   saveWarehouseOrdersInfo(
                       savedOmsOrdersInfo.getOrderNumber(),
                       warehouseReceivedItems.get().getCustomerId(),
-                      OrderStatus.CREATED);
+                      OrderStatus.CREATED,partner,address);
             }
             // decrease quantity
             warehouseReceivedItems.get().setQuantity((long) 0);
@@ -144,7 +147,7 @@ public class OMSInfoService {
                     omsRequestDTO.getOrderNumber() + "S1",
                     warehouseReceivedItems.get().getCustomerId(),
                     "BACK_ORDER",
-                    OrderStatus.BACKORDER);
+                    OrderStatus.BACKORDER,partner,address);
 
             // save omsunit with left over quantity with back order status in cil
             OMSOrdersItems saveBackOrderOMSOrdersItems =
@@ -167,7 +170,7 @@ public class OMSInfoService {
                     omsRequestDTO.getOrderNumber(),
                     warehouseReceivedItems.get().getCustomerId(),
                     "BACK_ORDER",
-                    OrderStatus.BACKORDER);
+                    OrderStatus.BACKORDER,partner,address);
 
             // save omsunit with left over quantity with back order status in cil
             OMSOrdersItems saveBackOrderOMSOrdersItems =
@@ -197,7 +200,7 @@ public class OMSInfoService {
                 saveWarehouseOrdersInfo(
                     savedOmsOrdersInfo.getOrderNumber(),
                     warehouseReceivedItems.get().getCustomerId(),
-                    OrderStatus.CREATED);
+                    OrderStatus.CREATED,partner,address);
           }
 
           // decrease quantity
@@ -241,7 +244,8 @@ public class OMSInfoService {
   }
 
   private OMSOrdersInfo saveOmsOrdersInfo(
-      String orderNumber, Long customerId, String reason, OrderStatus orderStatus) {
+      String orderNumber, Long customerId, String reason, OrderStatus orderStatus,
+      Optional<Partners> partner,Optional<Address> address) {
     OMSOrdersInfo omsOrdersInfo = new OMSOrdersInfo();
     //        private String orderNumber;
     //        private Long clientId;
@@ -250,6 +254,16 @@ public class OMSInfoService {
     omsOrdersInfo.setOrderNumber(orderNumber);
     omsOrdersInfo.setReason(reason);
     omsOrdersInfo.setOrderStatus(orderStatus);
+    // set partner
+    if(partner.isPresent() && partner.get().getIs_default()){
+      omsOrdersInfo.setCarrierId(partner.get().getId());
+      omsOrdersInfo.setCarrierName(partner.get().getName());
+      omsOrdersInfo.setServiceType(partner.get().getServiceType());
+    }
+    omsOrdersInfo.setShipToCityId(address.get().getCityId());
+    omsOrdersInfo.setShipToStateId(address.get().getStateId());
+    omsOrdersInfo.setShipToCountryId(address.get().getCountyId());
+    omsOrdersInfo.setShipToZipCode(address.get().getZipCode());
     return omsInfoRepository.save(omsOrdersInfo);
   }
 
@@ -271,7 +285,7 @@ public class OMSInfoService {
   }
 
   private WarehouseOrdersInfo saveWarehouseOrdersInfo(
-      String orderNumber, Long customerId, OrderStatus orderStatus) {
+      String orderNumber, Long customerId, OrderStatus orderStatus,Optional<Partners> partner,Optional<Address> address) {
 
     //        private String orderNumber;
     //        private Long clientId;
@@ -280,6 +294,19 @@ public class OMSInfoService {
     warehouseOrdersInfo.setOrderNumber(orderNumber);
     warehouseOrdersInfo.setCustomerId(customerId);
     warehouseOrdersInfo.setOrderStatus(orderStatus);
+
+    // set partner
+    if(partner.isPresent() && partner.get().getIs_default()){
+      warehouseOrdersInfo.setCarrierId(partner.get().getId());
+      warehouseOrdersInfo.setCarrierName(partner.get().getName());
+      warehouseOrdersInfo.setServiceType(partner.get().getServiceType());
+    }
+    warehouseOrdersInfo.setShipToCityId(address.get().getCityId());
+    warehouseOrdersInfo.setShipToStateId(address.get().getStateId());
+    warehouseOrdersInfo.setShipToCountryId(address.get().getCountyId());
+    warehouseOrdersInfo.setShipToZipCode(address.get().getZipCode());
+
+
     return warehouseOrdersInfoRepository.save(warehouseOrdersInfo);
   }
 }

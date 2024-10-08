@@ -13,6 +13,6 @@ public class OMSRequestDTO {
     private Long shipToStateId;
     private Long shipToCountryId;
     private String shipToZipCode;
-    private Long carrierId;
+//    private Long carrierId;
     List<OMSProductDetailsDTO> productDetails;
 }

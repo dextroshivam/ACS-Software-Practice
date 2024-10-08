@@ -20,6 +20,9 @@ public class WarehouseService {
         return warehouseReceivedItemsRepository.findByProductId(productId);
     }
 
+//
+
+
     // Find all warehouse received items
     public List<WarehouseReceivedItems> findAllWarehouseReceivedItems() {
         return warehouseReceivedItemsRepository.findAll();
