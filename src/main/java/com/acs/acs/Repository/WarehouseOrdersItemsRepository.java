@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface WarehouseOrdersItemsRepository extends JpaRepository<WarehouseOrdersItems, Long> {
     WarehouseOrdersItems findByProductId(Long productId);
     List<WarehouseOrdersItems> findByWarehouseOrderInfoId(Long warehouseOrderInfoId);
+    WarehouseOrdersItems findByProductIdAndWarehouseOrderInfoId(Long productId,Long warehouseOrderInfoId);
 }

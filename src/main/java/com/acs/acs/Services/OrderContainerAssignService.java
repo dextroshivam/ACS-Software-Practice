@@ -35,8 +35,9 @@ public class OrderContainerAssignService {
     String response = "";
     /********************  Get static data member's value **********************/
     String orderNumber = orderContainerAssignRequestDTO.getOrderNumber();
-    Long customerId =
-        warehouseOrdersInfoRepository.findByOrderNumber(orderNumber).get().getCustomerId();
+    WarehouseOrdersInfo warehouseOrdersInfo=warehouseOrdersInfoRepository.findByOrderNumber(orderNumber).get();
+    Long warehouseOrdersInfoId=warehouseOrdersInfo.getId();
+    Long customerId =warehouseOrdersInfo.getCustomerId();
     String pickerName = orderContainerAssignRequestDTO.getPickerName();
     /******************** create OrderContainerAssign **********************/
     List<OrderContainerAssign> responseList = new ArrayList<>();
@@ -50,7 +51,7 @@ public class OrderContainerAssignService {
     for (ProductAssignContainerDTO productAssignContainerDTO : productRequestsLists) {
       Long productId = productAssignContainerDTO.getProductId();
       Long presentOrderQuantity =
-          warehouseOrdersItemsRepository.findByProductId(productId).getProductQuantity();
+          warehouseOrdersItemsRepository.findByProductIdAndWarehouseOrderInfoId(productId,warehouseOrdersInfoId).getProductQuantity();
       // list of container specification
       List<ProductContainerQuantityDTO> productContainerQuantityDTOList =
           productAssignContainerDTO.getProductContainerQuantityDTOList();
@@ -98,15 +99,14 @@ public class OrderContainerAssignService {
       }
     }
     // change in order info
-    Optional<WarehouseOrdersInfo> warehouseOrdersInfo =
+    Optional<WarehouseOrdersInfo> savingWarehouseOrdersInfo =
             warehouseOrdersInfoRepository
                     .findByOrderNumber(orderNumber);
-      warehouseOrdersInfo.ifPresent(
+    savingWarehouseOrdersInfo.ifPresent(
               (ordersInfo)->{
                ordersInfo.setOrderStatus(OrderStatus.PICKED);
                warehouseOrdersInfoRepository.save(ordersInfo);
               });
-//    warehouseOrdersInfoRepository.save(warehouseOrdersInfo);
     return response;
   }
 }
