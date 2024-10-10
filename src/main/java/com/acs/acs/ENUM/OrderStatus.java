@@ -4,7 +4,8 @@ public enum OrderStatus {
     INITIATED(0),
     CREATED(1),
     BACKORDER(18),
-    ASSIGNED(2);
+    ASSIGNED(2),
+    PICKED(3);
 
     private final int code;
 

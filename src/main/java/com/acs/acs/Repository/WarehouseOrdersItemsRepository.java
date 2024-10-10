@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface WarehouseOrdersItemsRepository extends JpaRepository<WarehouseOrdersItems, Long> {
-
+    WarehouseOrdersItems findByProductId(Long productId);
     List<WarehouseOrdersItems> findByWarehouseOrderInfoId(Long warehouseOrderInfoId);
 }
