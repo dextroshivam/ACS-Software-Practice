@@ -17,7 +17,7 @@ public class OrderContainerAssign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private Long warehouseId;
     private String orderNumber;
     private Long containerId;
     private Long productId;
@@ -27,4 +27,9 @@ public class OrderContainerAssign {
     private LocalDateTime assignedOn;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    private Long boxId;
+    private Integer boxLength;
+    private Integer boxWidth;
+    private Integer boxHeight;
+    private Integer boxWeight;
 }

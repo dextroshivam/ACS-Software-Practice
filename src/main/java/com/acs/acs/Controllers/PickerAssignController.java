@@ -15,7 +15,7 @@ public class PickerAssignController {
    @Autowired
    PickerAssignService pickerAssignService;
     @PostMapping("/assign")
-    public ResponseEntity<String> assignPicker(@RequestParam String orderNumber, @RequestParam String pickerName) {
+    public ResponseEntity<String> assignPicker(@RequestParam String orderNumber, @RequestParam String pickerName,@RequestParam Long containerId) {
         String response=pickerAssignService.assignPicker(orderNumber,pickerName);
         return ResponseEntity.ok(response);
     }

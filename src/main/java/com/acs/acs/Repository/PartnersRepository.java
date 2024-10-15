@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PartnersRepository extends JpaRepository<Partners, Long> {
     Optional<Partners> findByCustomerId(Long customerId);
+
+    Partners findByName(String carrierName);
 }

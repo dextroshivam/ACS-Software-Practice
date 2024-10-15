@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class OMSRequestDTO {
+    private Long warehouseId;
     private String orderNumber;
     private Long customerId;
     private Long shipToCityId;

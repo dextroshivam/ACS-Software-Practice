@@ -26,6 +26,11 @@ public class OMSOrdersInfo {
   private String reason;
   private OrderStatus orderStatus;
 
+  private Long warehouseId;
+
+
+  private String addressLine1;
+  private String addressLine2;
   private Long shipToCityId;
   private Long shipToStateId;
   private Long shipToCountryId;
@@ -33,6 +38,8 @@ public class OMSOrdersInfo {
   private Long carrierId;
   private String carrierName;
   private ServiceType serviceType;
+
+
 
 
 

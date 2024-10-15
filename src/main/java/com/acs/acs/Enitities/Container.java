@@ -12,16 +12,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Address {
+public class Container {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
-    String addressLine1;
-    String addressLine2;
-    Long stateId;
-    Long cityId;
-    Long countyId;
-    String zipCode;
-
+    private Long Id;
+    private boolean status;
+    private String orderNumber;
 }

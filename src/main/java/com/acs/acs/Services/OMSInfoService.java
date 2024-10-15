@@ -44,6 +44,7 @@ public class OMSInfoService {
     // create oms without setting reason
     OMSOrdersInfo savedOmsOrdersInfo;
 
+
     /* Check address */
     Optional<Address> address =
         addressRepository.findByCityIdAndStateIdAndCountyIdAndZipCode(
@@ -58,11 +59,11 @@ public class OMSInfoService {
 
     if (!address.isPresent()) {
       savedOmsOrdersInfo =
-          saveOmsOrdersInfo(
+          saveOmsOrdersInfo( omsRequestDTO.getWarehouseId(),
               omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,partner, address);
     } else {
       savedOmsOrdersInfo =
-          saveOmsOrdersInfo(
+          saveOmsOrdersInfo(omsRequestDTO.getWarehouseId(),
               omsRequestDTO.getOrderNumber(), omsRequestDTO.getCustomerId(), "", null,partner, address);
     }
 
@@ -91,7 +92,7 @@ public class OMSInfoService {
           if (presentQuantity == 0) {
             // create back order for full amount if the prodcut is not present
             OMSOrdersInfo backOrderedOMSOrdersInfo =
-                saveOmsOrdersInfo(
+                saveOmsOrdersInfo(omsRequestDTO.getWarehouseId(),
                     omsRequestDTO.getOrderNumber(),
                     warehouseReceivedItems.get().getCustomerId(),
                     "BACK_ORDER",
@@ -127,7 +128,7 @@ public class OMSInfoService {
             if (!isWarehouseOrdersInfoCreated) {
               isWarehouseOrdersInfoCreated = true;
               savedWarehouseOrdersInfo =
-                  saveWarehouseOrdersInfo(
+                  saveWarehouseOrdersInfo(omsRequestDTO.getWarehouseId(),
                       savedOmsOrdersInfo.getOrderNumber(),
                       warehouseReceivedItems.get().getCustomerId(),
                       OrderStatus.CREATED,partner,address);
@@ -143,7 +144,7 @@ public class OMSInfoService {
 
             // save oms info of back order with s1 id and back order status
             OMSOrdersInfo backOrderedOMSOrdersInfo =
-                saveOmsOrdersInfo(
+                saveOmsOrdersInfo(omsRequestDTO.getWarehouseId(),
                     omsRequestDTO.getOrderNumber() + "S1",
                     warehouseReceivedItems.get().getCustomerId(),
                     "BACK_ORDER",
@@ -166,7 +167,7 @@ public class OMSInfoService {
             /* Partial order is false*/
             // save oms info of back order with back order status
             OMSOrdersInfo backOrderedOMSOrdersInfo =
-                saveOmsOrdersInfo(
+                saveOmsOrdersInfo( omsRequestDTO.getWarehouseId(),
                     omsRequestDTO.getOrderNumber(),
                     warehouseReceivedItems.get().getCustomerId(),
                     "BACK_ORDER",
@@ -197,7 +198,7 @@ public class OMSInfoService {
           if (!isWarehouseOrdersInfoCreated) {
             isWarehouseOrdersInfoCreated = true;
             savedWarehouseOrdersInfo =
-                saveWarehouseOrdersInfo(
+                saveWarehouseOrdersInfo(omsRequestDTO.getWarehouseId(),
                     savedOmsOrdersInfo.getOrderNumber(),
                     warehouseReceivedItems.get().getCustomerId(),
                     OrderStatus.CREATED,partner,address);
@@ -243,10 +244,13 @@ public class OMSInfoService {
     return warehouseOrdersItemsRepository.save(warehouseOrdersItems);
   }
 
-  private OMSOrdersInfo saveOmsOrdersInfo(
+  private OMSOrdersInfo saveOmsOrdersInfo( Long warehosueId,
       String orderNumber, Long customerId, String reason, OrderStatus orderStatus,
       Optional<Partners> partner,Optional<Address> address) {
     OMSOrdersInfo omsOrdersInfo = new OMSOrdersInfo();
+    omsOrdersInfo.setAddressLine1("AdressLine1");
+    omsOrdersInfo.setAddressLine2("AdressLine2");
+    omsOrdersInfo.setWarehouseId(warehosueId);
     //        private String orderNumber;
     //        private Long clientId;
     //        private String reason;
@@ -284,13 +288,16 @@ public class OMSInfoService {
     return omsOrdersItemsRepository.save(omsOrdersItems);
   }
 
-  private WarehouseOrdersInfo saveWarehouseOrdersInfo(
+  private WarehouseOrdersInfo saveWarehouseOrdersInfo( Long warehouseId,
       String orderNumber, Long customerId, OrderStatus orderStatus,Optional<Partners> partner,Optional<Address> address) {
 
     //        private String orderNumber;
     //        private Long clientId;
     //        private OrderStatus orderStatus;
     WarehouseOrdersInfo warehouseOrdersInfo = new WarehouseOrdersInfo();
+    warehouseOrdersInfo.setWarehouseId(warehouseId);
+    warehouseOrdersInfo.setAddressLine1("AdressLine1");
+    warehouseOrdersInfo.setAddressLine2("AdressLine2");
     warehouseOrdersInfo.setOrderNumber(orderNumber);
     warehouseOrdersInfo.setCustomerId(customerId);
     warehouseOrdersInfo.setOrderStatus(orderStatus);

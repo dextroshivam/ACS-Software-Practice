@@ -18,4 +18,10 @@ public class Warehouse {
 
     private String whName;
     private String marketDescription;
+    String addressLine1;
+    String addressLine2;
+    Long stateId;
+    Long cityId;
+    Long countyId;
+    String zipCode;
 }

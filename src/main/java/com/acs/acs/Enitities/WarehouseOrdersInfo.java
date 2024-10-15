@@ -23,7 +23,10 @@ public class WarehouseOrdersInfo {
     private Long customerId;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+    private Long warehouseId;
 
+    private String addressLine1;
+    private String addressLine2;
     private Long shipToCityId;
     private Long shipToStateId;
     private Long shipToCountryId;

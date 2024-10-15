@@ -4,17 +4,17 @@ import com.acs.acs.DTO.RequestDTO.OrderContainerRequest.OrderContainerAssignRequ
 import com.acs.acs.DTO.RequestDTO.OrderContainerRequest.ProductAssignContainerDTO;
 import com.acs.acs.DTO.RequestDTO.OrderContainerRequest.ProductContainerQuantityDTO;
 import com.acs.acs.ENUM.OrderStatus;
+import com.acs.acs.Enitities.Container;
 import com.acs.acs.Enitities.OrderContainerAssign;
 import com.acs.acs.Enitities.WarehouseOrdersInfo;
-import com.acs.acs.Repository.CustomerRepository;
-import com.acs.acs.Repository.OrderContainerAssignRespository;
-import com.acs.acs.Repository.WarehouseOrdersInfoRepository;
-import com.acs.acs.Repository.WarehouseOrdersItemsRepository;
+import com.acs.acs.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +24,7 @@ public class OrderContainerAssignService {
   @Autowired private WarehouseOrdersInfoRepository warehouseOrdersInfoRepository;
   @Autowired private WarehouseOrdersItemsRepository warehouseOrdersItemsRepository;
   @Autowired private CustomerRepository customerRepository;
+  @Autowired private ContainerRepository containerRepository;
 
   public String assignContainer(OrderContainerAssignRequestDTO orderContainerAssignRequestDTO) {
     /*
@@ -32,12 +33,14 @@ public class OrderContainerAssignService {
      * 3. save the data
      * 4. get client id
      */
-    String response = "";
+    StringBuilder response = new StringBuilder();
+    HashSet<Long> containerIdSet = new HashSet<>();
     /********************  Get static data member's value **********************/
     String orderNumber = orderContainerAssignRequestDTO.getOrderNumber();
-    WarehouseOrdersInfo warehouseOrdersInfo=warehouseOrdersInfoRepository.findByOrderNumber(orderNumber).get();
-    Long warehouseOrdersInfoId=warehouseOrdersInfo.getId();
-    Long customerId =warehouseOrdersInfo.getCustomerId();
+    WarehouseOrdersInfo warehouseOrdersInfo =
+        warehouseOrdersInfoRepository.findByOrderNumber(orderNumber).get();
+    Long warehouseOrdersInfoId = warehouseOrdersInfo.getId();
+    Long customerId = warehouseOrdersInfo.getCustomerId();
     String pickerName = orderContainerAssignRequestDTO.getPickerName();
     /******************** create OrderContainerAssign **********************/
     List<OrderContainerAssign> responseList = new ArrayList<>();
@@ -51,7 +54,9 @@ public class OrderContainerAssignService {
     for (ProductAssignContainerDTO productAssignContainerDTO : productRequestsLists) {
       Long productId = productAssignContainerDTO.getProductId();
       Long presentOrderQuantity =
-          warehouseOrdersItemsRepository.findByProductIdAndWarehouseOrderInfoId(productId,warehouseOrdersInfoId).getProductQuantity();
+          warehouseOrdersItemsRepository
+              .findByProductIdAndWarehouseOrderInfoId(productId, warehouseOrdersInfoId)
+              .getProductQuantity();
       // list of container specification
       List<ProductContainerQuantityDTO> productContainerQuantityDTOList =
           productAssignContainerDTO.getProductContainerQuantityDTOList();
@@ -63,9 +68,11 @@ public class OrderContainerAssignService {
       }
       // validate the quantity
       if (presentOrderQuantity != currentOrderQuantity) {
-        response +=
-            "Product with product Id : " + productId + " has indefinite quantity in container";
-        return response;
+        response
+            .append("Product with product Id : ")
+            .append(productId)
+            .append(" has indefinite quantity in container");
+        return response.toString();
       }
       successProductList.add(productAssignContainerDTO);
     }
@@ -90,7 +97,31 @@ public class OrderContainerAssignService {
         orderContainerAssign.setCustomerId(customerId);
         orderContainerAssign.setProductId(productId);
         // dynamic fields
-        orderContainerAssign.setContainerId(productContainerQuantityDTO.getContainerId());
+        Long containerId = productContainerQuantityDTO.getContainerId();
+        // validate container
+        Container container = containerRepository.findById(containerId).orElseThrow();
+        //        if(!containerIdSet.contains(containerId)) {
+        //        }else containerIdSet.add(containerId);
+        if (!container.isStatus()) {
+          response
+              .append("In this container ")
+              .append(orderNumber)
+              .append(" is already picked , please use another conatiner");
+          return response.toString();
+        } else {
+          if (container.getOrderNumber().equals(orderNumber)) {
+
+            orderContainerAssign.setContainerId(containerId);
+            container.setStatus(false);
+            containerRepository.save(container);
+          }else{
+            response
+                    .append("In this container ")
+                    .append(orderNumber)
+                    .append(" is already picked , please use another conatiner");
+            return response.toString();
+          }
+        }
         orderContainerAssign.setQuantity(productContainerQuantityDTO.getQuantity());
         orderContainerAssign.setAssignedOn(LocalDateTime.now());
         orderContainerAssign.setStatus(OrderStatus.PICKED);
@@ -100,13 +131,23 @@ public class OrderContainerAssignService {
     }
     // change in order info
     Optional<WarehouseOrdersInfo> savingWarehouseOrdersInfo =
-            warehouseOrdersInfoRepository
-                    .findByOrderNumber(orderNumber);
+        warehouseOrdersInfoRepository.findByOrderNumber(orderNumber);
     savingWarehouseOrdersInfo.ifPresent(
-              (ordersInfo)->{
-               ordersInfo.setOrderStatus(OrderStatus.PICKED);
-               warehouseOrdersInfoRepository.save(ordersInfo);
-              });
-    return response;
+        (ordersInfo) -> {
+          ordersInfo.setOrderStatus(OrderStatus.PICKED);
+          warehouseOrdersInfoRepository.save(ordersInfo);
+        });
+    return response.toString();
+  }
+
+  public List<OrderContainerAssign> getAssignedProductsContainer(
+      Long containerId, String orderNumber) {
+    return orderContainerAssignRespository.findByContainerIdAndOrderNumber(
+        containerId, orderNumber);
+  }
+
+  public Long getContainer() {
+
+    return containerRepository.findFirstByStatus(true).getId();
   }
 }
