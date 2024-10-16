@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController()
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
@@ -24,6 +24,15 @@ public class UserController {
     @Autowired
     private UserMapper userMapper;
 
+
+    /*
+
+
+
+    *  access_modifier returnType name(parameter){
+    *
+    * }
+    * */
 
     @PostMapping("/add")
     public ResponseEntity<User> addUser(@RequestBody UserRequestDTO userRequestDTO) {

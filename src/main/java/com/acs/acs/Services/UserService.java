@@ -25,6 +25,8 @@ public class UserService {
     @Autowired
     private PermissionRepository permissionRepository;
 
+
+
     public UserLoginResponseDTO login(UserLoginRequestDTO userLoginRequestDTO) {
 //        private String message;
 //        private Boolean success;
@@ -66,19 +68,12 @@ public class UserService {
     }
 
 
-
-
-
     public User addUser(UserRequestDTO userRequestDTO) {
         User user = UserRequestDTOToUser(userRequestDTO);
+
         user.setStatus(true);
         return userRepository.save(user);
     }
-
-
-
-
-
 
     public UniversalResponseDTO getUserById(long id) {
 
@@ -88,7 +83,7 @@ public class UserService {
 //        UserResponseDTO user;
         User user=userRepository.findById(id).orElseThrow(()-> new RuntimeException("User Not Found"));
         UserResponseDTO userResponseDTO = userToUserResponseDTO(user);
-
+//            User -> roleid(1)
 //        RoleResponseDTO role;
         Optional<Role> role=roleRepository.findById(user.getRoleId());
         RoleResponseDTO roleResponseDTO = roleToRoleResponseDTO(role);

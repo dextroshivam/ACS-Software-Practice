@@ -21,7 +21,7 @@ import java.util.Set;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Id;
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;

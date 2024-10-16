@@ -14,4 +14,7 @@ public interface OrderContainerAssignRespository extends JpaRepository<OrderCont
 
     OrderContainerAssign findByBoxIdAndStatus(Long boxLabel,OrderStatus status);
 
+    OrderContainerAssign findByOrderNumberAndBoxId(String orderNumber, Long boxId);
+
+    OrderContainerAssign findByOrderNumberAndBoxIdAndStatus(String orderNumber, Long boxId, OrderStatus orderStatus);
 }

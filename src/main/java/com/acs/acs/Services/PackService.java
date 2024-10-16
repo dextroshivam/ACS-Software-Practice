@@ -1,6 +1,7 @@
 package com.acs.acs.Services;
 
 import com.acs.acs.Controllers.WarehouseOrderController;
+import com.acs.acs.DTO.RequestDTO.BoxDimensionsRequest.BoxDimensionsRequestDTO;
 import com.acs.acs.ENUM.OrderStatus;
 import com.acs.acs.Enitities.OrderContainerAssign;
 import com.acs.acs.Enitities.WarehouseBoxLabel;
@@ -24,17 +25,17 @@ public class PackService {
   @Autowired private WarehouseBoxRepository warehouseBoxRepository;
 
   public String packProduct(
-      /*
-       * 1. create another OrderContainerAssign and save with status and box id
-       * 2. check box status and set into OrderContainerAssign;
-       * */
       String orderNumber, Long containerId, Long productId, Long quantity, Long boxId) {
+    /*
+     * 1. create another OrderContainerAssign and save with status and box id
+     * 2. check box status and set into OrderContainerAssign;
+     * */
     String response = "";
     OrderContainerAssign presentOrderContainerAssign =
         orderContainerAssignRespository.findByOrderNumberAndProductIdAndQuantityAndContainerId(
             orderNumber, productId, quantity, containerId);
-    if(presentOrderContainerAssign == null) {
-      return "Order conatiner data is not available";
+    if (presentOrderContainerAssign == null) {
+      return "Order container data is not available";
     }
     WarehouseBoxLabel warehouseBoxLabel = warehouseBoxRepository.findById(boxId).orElse(null);
     assert warehouseBoxLabel != null;
@@ -48,7 +49,7 @@ public class PackService {
     if (warehouseOrdersInfo.isPresent()) {
 
       warehouseOrdersInfo.get().setOrderStatus(OrderStatus.PACKED);
-    }else{
+    } else {
       return "Order is not available";
     }
     OrderContainerAssign orderContainerAssign = new OrderContainerAssign();
@@ -63,5 +64,25 @@ public class PackService {
     orderContainerAssign.setBoxId(boxId);
     orderContainerAssignRespository.save(orderContainerAssign);
     return response;
+  }
+
+  public String setBoxDimensions(BoxDimensionsRequestDTO boxDimensionsRequestDTO) {
+    OrderContainerAssign presentOrderContainerAssign =
+        orderContainerAssignRespository.findByOrderNumberAndBoxIdAndStatus(boxDimensionsRequestDTO.getOrderNumber(), boxDimensionsRequestDTO.getBoxId()
+        ,OrderStatus.PACKED);
+//    OrderContainerAssign presentOrderContainerAssign =
+//        orderContainerAssignRespository.findByOrderNumberAndBoxId(
+//            boxDimensionsRequestDTO.getOrderNumber(), boxDimensionsRequestDTO.getBoxId());
+
+    presentOrderContainerAssign.setBoxWeight(boxDimensionsRequestDTO.getBoxWeight());
+    presentOrderContainerAssign.setBoxLength(
+        boxDimensionsRequestDTO.getBoxDimensions().getBoxLength());
+    presentOrderContainerAssign.setBoxHeight(
+        boxDimensionsRequestDTO.getBoxDimensions().getBoxHeight());
+    presentOrderContainerAssign.setBoxWidth(
+        boxDimensionsRequestDTO.getBoxDimensions().getBoxWidth());
+    presentOrderContainerAssign.setStatus(OrderStatus.PACKED);
+    orderContainerAssignRespository.save(presentOrderContainerAssign);
+    return "Done";
   }
 }

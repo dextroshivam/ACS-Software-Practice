@@ -31,5 +31,5 @@ public class OrderContainerAssign {
     private Integer boxLength;
     private Integer boxWidth;
     private Integer boxHeight;
-    private Integer boxWeight;
+    private Double boxWeight;
 }
