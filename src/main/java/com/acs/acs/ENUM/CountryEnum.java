@@ -5,7 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 
 public enum CountryEnum {
-    INDIA("IN");
+    INDIA("IN"),
+    COUNTRY1("CON1");
 
 //    AFGHANISTAN("AF"),
 //    ALBANIA("AL"),

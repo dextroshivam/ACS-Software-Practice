@@ -12,9 +12,11 @@ public interface OrderContainerAssignRespository extends JpaRepository<OrderCont
     List<OrderContainerAssign> findByContainerIdAndOrderNumber(Long containerId, String orderNumber);
     OrderContainerAssign findByOrderNumberAndProductIdAndQuantityAndContainerId(String orderNumber,Long productId,Long quantity,Long containerId);
 
-    OrderContainerAssign findByBoxIdAndStatus(Long boxLabel,OrderStatus status);
+    OrderContainerAssign findFirstByBoxIdAndStatus(Long boxLabel,OrderStatus status);
 
     OrderContainerAssign findByOrderNumberAndBoxId(String orderNumber, Long boxId);
 
     OrderContainerAssign findByOrderNumberAndBoxIdAndStatus(String orderNumber, Long boxId, OrderStatus orderStatus);
+
+    List<OrderContainerAssign> findByBoxIdAndStatus(Long boxId, OrderStatus orderStatus);
 }

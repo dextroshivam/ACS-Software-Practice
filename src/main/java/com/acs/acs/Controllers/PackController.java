@@ -27,9 +27,6 @@ public class PackController {
             return e.getMessage();
         }
     }
-    @PostMapping("/setBoxDimensions")
-    public String setBoxDimensions(@RequestBody BoxDimensionsRequestDTO boxDimensionsRequestDTO){
-        return packService.setBoxDimensions(boxDimensionsRequestDTO);
-    }
+
 
 }

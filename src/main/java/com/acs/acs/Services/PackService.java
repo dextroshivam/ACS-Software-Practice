@@ -64,25 +64,6 @@ public class PackService {
     orderContainerAssign.setBoxId(boxId);
     orderContainerAssignRespository.save(orderContainerAssign);
     return response;
-  }
+  }}
 
-  public String setBoxDimensions(BoxDimensionsRequestDTO boxDimensionsRequestDTO) {
-    OrderContainerAssign presentOrderContainerAssign =
-        orderContainerAssignRespository.findByOrderNumberAndBoxIdAndStatus(boxDimensionsRequestDTO.getOrderNumber(), boxDimensionsRequestDTO.getBoxId()
-        ,OrderStatus.PACKED);
-//    OrderContainerAssign presentOrderContainerAssign =
-//        orderContainerAssignRespository.findByOrderNumberAndBoxId(
-//            boxDimensionsRequestDTO.getOrderNumber(), boxDimensionsRequestDTO.getBoxId());
 
-    presentOrderContainerAssign.setBoxWeight(boxDimensionsRequestDTO.getBoxWeight());
-    presentOrderContainerAssign.setBoxLength(
-        boxDimensionsRequestDTO.getBoxDimensions().getBoxLength());
-    presentOrderContainerAssign.setBoxHeight(
-        boxDimensionsRequestDTO.getBoxDimensions().getBoxHeight());
-    presentOrderContainerAssign.setBoxWidth(
-        boxDimensionsRequestDTO.getBoxDimensions().getBoxWidth());
-    presentOrderContainerAssign.setStatus(OrderStatus.PACKED);
-    orderContainerAssignRespository.save(presentOrderContainerAssign);
-    return "Done";
-  }
-}
